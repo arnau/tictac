@@ -40,13 +40,13 @@ bar n total value color =
         height_ =
             value |> toString
     in
-    rect
-        [ fill color
-        , x x_
-        , y y_
-        , width "10"
-        , height height_
-        , rx "2"
-        , ry "2"
-        ]
-        []
+        rect
+            [ fill color
+            , x x_
+            , y y_
+            , width "10"
+            , height height_
+            , rx "2"
+            , ry "2"
+            ]
+            []

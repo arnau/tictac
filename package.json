@@ -1,16 +1,29 @@
 {
   "name": "tictac",
   "version": "0.1.0",
-  "description": "",
+  "description": "A pomodoro app focused on simplicity",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "dev": "webpack-dev-server --port 3000",
+    "test": "elm-test",
+    "format": "elm-format --yes src"
   },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
+  "author": "Arnau Siches",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "css-loader": "^0.28.5",
     "elm": "^0.18.0",
+    "elm-css-webpack-loader": "^3.2.0",
     "elm-format": "^0.6.1-alpha",
-    "elm-test": "^0.18.8"
-  }
+    "elm-test": "^0.18.8",
+    "elm-webpack-loader": "^4.3.1",
+    "file-loader": "^0.11.2",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {}
 }
