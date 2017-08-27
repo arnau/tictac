@@ -1,5 +1,6 @@
 module World exposing (..)
 
+import Notification exposing (Permission, notify, requestPermission)
 import Task
 import Tic exposing (Tic)
 import Time exposing (Time, second)
@@ -13,6 +14,7 @@ type alias Model =
     { tic : Tic
     , trail : List Tic
     , timer : Timer
+    , notifications : Permission
     }
 
 
@@ -21,8 +23,10 @@ init =
     ( { tic = Tic.initWork "elm"
       , trail = []
       , timer = Timer.initWork
+      , notifications = Notification.denied
       }
-    , Cmd.none
+      -- , Cmd.none
+    , requestPermission ""
     )
 
 
@@ -37,13 +41,28 @@ type Msg
     | TimerReset
     | TimerStart
     | TimerStop
+    | AllowNotifications String
+    | RequestPermission
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        RequestPermission ->
+            ( model, requestPermission "" )
+
+        AllowNotifications answer ->
+            let
+                perm =
+                    Notification.toPermission answer
+            in
+            if Notification.isGranted perm then
+                ( { model | notifications = perm }, Cmd.none )
+            else
+                ( model, Cmd.none )
+
         Tick _ ->
-            ( updateTimer model, Cmd.none )
+            updateTimer model
 
         TicAddTopic topic ->
             ( { model | tic = Tic.withTopic topic model.tic }, Cmd.none )
@@ -70,19 +89,19 @@ stopTimer model =
     { model | timer = Timer.stopOr model.timer Timer.initWork }
 
 
-updateTimer : Model -> Model
+updateTimer : Model -> ( Model, Cmd Msg )
 updateTimer model =
     if Timer.isRunning model.timer then
         let
             timer =
                 Timer.tick model.timer
         in
-            if Timer.isDone timer then
-                updateDoneTimer model
-            else
-                { model | timer = timer }
+        if Timer.isDone timer then
+            ( updateDoneTimer model, notify "Time is up" )
+        else
+            ( { model | timer = timer }, Cmd.none )
     else
-        model
+        ( model, Cmd.none )
 
 
 updateDoneTimer : Model -> Model

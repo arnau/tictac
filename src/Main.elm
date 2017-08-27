@@ -1,9 +1,10 @@
 module Main exposing (..)
 
 import Html
+import Notification exposing (receivePermission)
 import Time exposing (Time, second)
 import View.Main exposing (view)
-import World exposing (Model, Msg(Tick))
+import World exposing (Model, Msg(AllowNotifications, Tick))
 
 
 main : Program Never Model Msg
@@ -18,4 +19,7 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every second Tick
+    Sub.batch
+        [ Time.every second Tick
+        , receivePermission AllowNotifications
+        ]

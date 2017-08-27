@@ -3,7 +3,9 @@ module View.Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
+import Notification
 import StatsIcon
+import View.Notification
 import View.Timer
 import World exposing (Model, Msg(TicAddTopic, Tick, TimerReset))
 
@@ -33,14 +35,17 @@ view model =
             , ( "padding", "0 1rem" )
             ]
     in
-        div []
-            [ header [ style headerStyle ]
-                [ StatsIcon.regular
-                , topicView model.tic.topic
-                , button [ onClick TimerReset, style resetButton ] [ text "Reset timer" ]
-                ]
-            , View.Timer.button model.timer model.tic
+    div []
+        [ header [ style headerStyle ]
+            [ StatsIcon.regular
+            , topicView model.tic.topic
+            , button [ onClick TimerReset, style resetButton ] [ text "Reset timer" ]
             ]
+        , if Notification.isGranted model.notifications then
+            View.Timer.button model.timer model.tic
+          else
+            View.Notification.message
+        ]
 
 
 topicView : String -> Html Msg
@@ -59,11 +64,11 @@ topicView topic =
             , ( "width", "20vw" )
             ]
     in
-        input
-            [ type_ "text"
-            , style topicStyle
-            , placeholder "Topic"
-            , onInput TicAddTopic
-            , value topic
-            ]
-            []
+    input
+        [ type_ "text"
+        , style topicStyle
+        , placeholder "Topic"
+        , onInput TicAddTopic
+        , value topic
+        ]
+        []
