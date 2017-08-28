@@ -5,6 +5,7 @@ module View.NotificationIcon exposing (..)
 import Html.Attributes exposing (attribute)
 import Svg exposing (..)
 import Svg.Attributes exposing (cx, cy, fill, height, id, r, viewBox, width)
+import View.AlertIcon as AlertIcon
 
 
 role : String -> Attribute msg
@@ -25,6 +26,24 @@ allowed =
 blocked : String
 blocked =
     "red"
+
+
+
+-- icon : Bool -> Svg msg
+-- icon isAllowed =
+--     let
+--         message =
+--             if isAllowed then
+--                 "Notifications allowed"
+--             else
+--                 "Notifications blocked"
+--         color =
+--             if isAllowed then
+--                 allowed
+--             else
+--                 blocked
+--     in
+--     AlertIcon.icon color message
 
 
 icon : Bool -> Svg msg
