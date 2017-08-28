@@ -2,16 +2,11 @@ module View.Timer exposing (..)
 
 import Css exposing (..)
 import Html exposing (Attribute, Html)
-import Html.Attributes as At
 import Html.Events exposing (onClick)
 import Tic exposing (Tic)
 import Timer exposing (Timer)
+import View.Helpers exposing (style)
 import World exposing (Msg(..))
-
-
-style : List Style -> Attribute Msg
-style =
-    Css.asPairs >> At.style
 
 
 button : Timer -> Tic -> Html Msg
@@ -35,9 +30,11 @@ button state { topic, amount } =
             , display block
             , fontFamilies [ "Roboto Condensed", "sans-serif" ]
             , fontSize (Css.rem 10)
-            , height (vh 96)
+
+            -- , height (vh 96)
             , outline none
-            , width (vw 100)
+
+            -- , width (vw 100)
             ]
     in
     Html.button [ onClick clickAction, style buttonStyle ]

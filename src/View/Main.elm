@@ -3,7 +3,7 @@ module View.Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-import StatsIcon
+import View.ActivityIcon as Activity
 import View.Notification
 import View.Timer
 import World exposing (Model, Msg(TicAddTopic, Tick, TimerReset))
@@ -13,8 +13,7 @@ view : Model -> Html Msg
 view model =
     let
         headerStyle =
-            [ ( "height", "4vh" )
-            , ( "padding", "0.4rem" )
+            [ ( "padding", "10px" )
             , ( "box-sizing", "border-box" )
             , ( "background-color", "black" )
             , ( "display", "flex" )
@@ -33,10 +32,17 @@ view model =
             , ( "min-height", "3vh" )
             , ( "padding", "0 1rem" )
             ]
+
+        wrapperStyle =
+            [ ( "display", "grid" )
+            , ( "grid-template-rows", "40px 1fr" )
+            , ( "height", "100vh" )
+            ]
     in
-    div []
+    div [ style wrapperStyle ]
         [ header [ style headerStyle ]
-            [ StatsIcon.regular
+            -- [ Activity.icon "#F26"
+            [ Activity.icon "#FFF"
             , topicView model.tic.topic
             , div []
                 [ button [ onClick TimerReset, style resetButton ] [ text "Reset timer" ]
