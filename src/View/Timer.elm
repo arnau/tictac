@@ -30,11 +30,7 @@ button state { topic, amount } =
             , display block
             , fontFamilies [ "Roboto Condensed", "sans-serif" ]
             , fontSize (Css.rem 10)
-
-            -- , height (vh 96)
             , outline none
-
-            -- , width (vw 100)
             ]
     in
     Html.button [ onClick clickAction, style buttonStyle ]
