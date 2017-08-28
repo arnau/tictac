@@ -5,6 +5,9 @@ BUILD_DIR = dist
 build:
 	$(NPM) run build -- -p
 
+install:
+	$(NPM) install
+
 clean:
 	rm -rf $(BUILD_DIR)
 

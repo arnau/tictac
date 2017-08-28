@@ -16,9 +16,16 @@ function requestPermission(message) {
   Notification.requestPermission().then(app.ports.receivePermission.send)
 }
 
+function notify(message) {
+  new Notification(message, {requireInteraction: true, body: "TicTac says so"})
+}
+
+function storeTopic(topic) {
+  localStorage.setItem(topicKey, topic)
+}
+
 app.ports.requestPermission.subscribe(requestPermission)
 
-app.ports.notify.subscribe((message) =>
-  new Notification(message, {requireInteraction: true, body: "TicTac says so"}))
+app.ports.notify.subscribe(notify)
 
-app.ports.storeTopic.subscribe((topic) => localStorage.setItem(topicKey, topic))
+app.ports.storeTopic.subscribe(storeTopic)

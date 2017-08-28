@@ -1,10 +1,11 @@
 module Main exposing (..)
 
 import Html
+import Keyboard
 import Notification exposing (receivePermission)
 import Time exposing (Time, second)
 import View.Main exposing (view)
-import World exposing (Flags, Model, Msg(AllowNotifications, Tick))
+import World exposing (Flags, Model, Msg(AllowNotifications, KeyIn, Tick))
 
 
 main : Program Flags Model Msg
@@ -22,4 +23,5 @@ subscriptions model =
     Sub.batch
         [ Time.every second Tick
         , receivePermission AllowNotifications
+        , Keyboard.ups KeyIn
         ]

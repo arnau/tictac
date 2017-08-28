@@ -1,5 +1,7 @@
 module World exposing (..)
 
+import Keyboard exposing (KeyCode)
+import Keyring exposing (Action(..), Mode)
 import LocalStorage exposing (storeTopic)
 import Notification exposing (Permission, notify, requestPermission)
 import Task
@@ -20,6 +22,7 @@ type alias Model =
     , trail : List Tic
     , timer : Timer
     , notifications : Permission
+    , mode : Mode
     }
 
 
@@ -29,6 +32,7 @@ init { topic } =
       , trail = []
       , timer = Timer.initWork
       , notifications = Notification.denied
+      , mode = Keyring.normal
       }
     , requestPermission ""
     )
@@ -47,11 +51,19 @@ type Msg
     | TimerStop
     | AllowNotifications String
     | RequestPermission
+    | KeyIn KeyCode
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        KeyIn code ->
+            ( model
+                |> updateMode code
+                |> updateAction code
+            , Cmd.none
+            )
+
         RequestPermission ->
             ( model, requestPermission "" )
 
@@ -122,3 +134,57 @@ updateDoneTimer model =
             , tic = Tic.next model.trail
             , trail = model.tic :: model.trail
         }
+
+
+updateMode : KeyCode -> Model -> Model
+updateMode code model =
+    let
+        maybeMode =
+            Keyring.toMode code
+
+        _ =
+            Debug.log "code" code
+
+        _ =
+            Debug.log "mode" maybeMode
+    in
+    case maybeMode of
+        Nothing ->
+            model
+
+        Just mode ->
+            { model | mode = mode }
+
+
+updateAction : KeyCode -> Model -> Model
+updateAction code model =
+    let
+        maybeAction =
+            Keyring.toAction model.mode code
+
+        _ =
+            Debug.log "action" maybeAction
+    in
+    case maybeAction of
+        Nothing ->
+            model
+
+        Just action ->
+            case action of
+                Reset ->
+                    { model | timer = Timer.initWork }
+
+                Start ->
+                    if Timer.isRunning model.timer then
+                        model
+                    else
+                        { model | timer = Timer.startOr model.timer model.tic.amount Timer.initWork }
+
+                Pause ->
+                    if Timer.isStopped model.timer then
+                        model
+                    else
+                        stopTimer model
+
+                _ ->
+                    model

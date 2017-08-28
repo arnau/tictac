@@ -1,11 +1,12 @@
 module View.Main exposing (..)
 
-import Css exposing (..)
+-- import Css exposing (..)
+-- import View.Helpers
+
 import Html exposing (Html, button, div, header, input)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import View.ActivityIcon as Activity
-import View.Helpers
 import View.Notification as Notification
 import View.Timer as Timer
 import View.Topic as Topic

@@ -81,6 +81,16 @@ isRunning timer =
             False
 
 
+isStopped : Timer -> Bool
+isStopped timer =
+    case timer of
+        Stopped _ ->
+            True
+
+        _ ->
+            False
+
+
 start : Timer -> Result Error Timer
 start timer =
     case timer of
