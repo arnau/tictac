@@ -19,6 +19,7 @@ init =
     stylesheet
         [ body
             [ backgroundColor (hex "000000")
+            , fontFamilies [ "Roboto Condensed", "sans-serif" ]
             , margin zero
             , padding zero
             ]

@@ -3,7 +3,6 @@ module View.Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-import Notification
 import StatsIcon
 import View.Notification
 import View.Timer
@@ -39,12 +38,12 @@ view model =
         [ header [ style headerStyle ]
             [ StatsIcon.regular
             , topicView model.tic.topic
-            , button [ onClick TimerReset, style resetButton ] [ text "Reset timer" ]
+            , div []
+                [ button [ onClick TimerReset, style resetButton ] [ text "Reset timer" ]
+                , View.Notification.message model.notifications
+                ]
             ]
-        , if Notification.isGranted model.notifications then
-            View.Timer.button model.timer model.tic
-          else
-            View.Notification.message
+        , View.Timer.button model.timer model.tic
         ]
 
 

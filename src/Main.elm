@@ -4,12 +4,12 @@ import Html
 import Notification exposing (receivePermission)
 import Time exposing (Time, second)
 import View.Main exposing (view)
-import World exposing (Model, Msg(AllowNotifications, Tick))
+import World exposing (Flags, Model, Msg(AllowNotifications, Tick))
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { init = World.init
         , view = view
         , update = World.update

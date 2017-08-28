@@ -5,19 +5,20 @@ require("./Stylesheets.elm")
 
 const Elm = require("./Main")
 
-const app = Elm.Main.embed(document.getElementById("main"))
+const topicKey = "tictac-topic"
+
+const topic = localStorage.getItem(topicKey)
+const app = Elm.Main.embed(document.getElementById("main"), {topic: topic})
 // const app = Elm.Main.fullscreen()
 
-app.ports.notify.subscribe(function (message) {
-  new Notification(message, {requireInteraction: true, body: "TicTac says so"});
-});
 
-app.ports.requestPermission.subscribe(function (message) {
-  Notification.requestPermission().then(
-    function (permission) {
-      console.log("received permission: " + permission)
-      app.ports.receivePermission.send(permission)
-    }
-  );
-  console.log(message);
-});
+function requestPermission(message) {
+  Notification.requestPermission().then(app.ports.receivePermission.send)
+}
+
+app.ports.requestPermission.subscribe(requestPermission)
+
+app.ports.notify.subscribe((message) =>
+  new Notification(message, {requireInteraction: true, body: "TicTac says so"}))
+
+app.ports.storeTopic.subscribe((topic) => localStorage.setItem(topicKey, topic))

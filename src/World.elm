@@ -1,5 +1,6 @@
 module World exposing (..)
 
+import LocalStorage exposing (storeTopic)
 import Notification exposing (Permission, notify, requestPermission)
 import Task
 import Tic exposing (Tic)
@@ -10,6 +11,10 @@ import Timer exposing (Timer)
 -- MODEL
 
 
+type alias Flags =
+    { topic : Maybe String }
+
+
 type alias Model =
     { tic : Tic
     , trail : List Tic
@@ -18,14 +23,13 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { tic = Tic.initWork "elm"
+init : Flags -> ( Model, Cmd Msg )
+init { topic } =
+    ( { tic = Maybe.withDefault "elm" topic |> Tic.initWork
       , trail = []
       , timer = Timer.initWork
       , notifications = Notification.denied
       }
-      -- , Cmd.none
     , requestPermission ""
     )
 
@@ -65,7 +69,7 @@ update msg model =
             updateTimer model
 
         TicAddTopic topic ->
-            ( { model | tic = Tic.withTopic topic model.tic }, Cmd.none )
+            ( { model | tic = Tic.withTopic topic model.tic }, storeTopic topic )
 
         TicStamp t ->
             ( { model | tic = Tic.withTime t model.tic }
