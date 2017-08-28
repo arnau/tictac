@@ -5,9 +5,9 @@ noise, movement or other annoyances that prevent you to concentrate.
 
 ## Goals
 
-[x] Screen to control your work/rest cycles.
-[ ] Screen to visualise past work/rest cycles.
-[ ] Electron application.
+* [x] Screen to control your work/rest cycles.
+* [ ] Screen to visualise past work/rest cycles.
+* [ ] Electron application.
 
 ## License
 
