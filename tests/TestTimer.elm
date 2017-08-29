@@ -10,7 +10,11 @@ suite =
     describe "Clock"
         [ test "A new clock doesn't run" <|
             \_ ->
-                Expect.equal Timer.initRest (Stopped 300)
+                let
+                    ( timer, _ ) =
+                        Timer.initRest
+                in
+                Expect.equal timer (Stopped 300)
         , test "A stopped clock can be started" <|
             \_ ->
                 let

@@ -6,7 +6,7 @@ module View.Topic exposing (..)
 import Html exposing (Html, button, div, header, input)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-import World exposing (Model, Msg(TicAddTopic, Tick, TimerReset))
+import World exposing (Model, Msg(RecordAddTopic, Tick, TimerReset))
 
 
 view : String -> Html Msg
@@ -29,7 +29,7 @@ view state =
         [ type_ "text"
         , style styleList
         , placeholder "Topic"
-        , onInput TicAddTopic
+        , onInput RecordAddTopic
         , value state
         ]
         []

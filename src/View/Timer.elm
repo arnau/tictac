@@ -3,14 +3,14 @@ module View.Timer exposing (..)
 import Css exposing (..)
 import Html exposing (Attribute, Html)
 import Html.Events exposing (onClick)
-import Tic exposing (Tic)
 import Timer exposing (Timer)
+import Trail.Record exposing (Record)
 import View.Helpers exposing (style)
 import World exposing (Msg(..))
 
 
-button : Timer -> Tic -> Html Msg
-button state { topic, amount } =
+button : Timer -> Record -> Html Msg
+button state { topic } =
     let
         clickAction =
             if Timer.isRunning state then

@@ -1,14 +1,15 @@
 module World exposing (..)
 
+import Date exposing (Date, second)
 import Keyboard exposing (KeyCode)
 import Keyring exposing (Mode)
 import Keyring.Action exposing (Action(..))
 import LocalStorage exposing (storeTopic)
 import Notification exposing (Permission, notify, requestPermission)
 import Task
-import Tic exposing (Tic)
 import Time exposing (Time, second)
 import Timer exposing (Timer)
+import Trail.Record as Record exposing (Record)
 
 
 -- MODEL
@@ -19,8 +20,8 @@ type alias Flags =
 
 
 type alias Model =
-    { tic : Tic
-    , trail : List Tic
+    { record : Record
+    , trail : List Record
     , timer : Timer
     , notifications : Permission
     , mode : Mode
@@ -29,9 +30,16 @@ type alias Model =
 
 init : Flags -> ( Model, Cmd Msg )
 init { topic } =
-    ( { tic = Maybe.withDefault "elm" topic |> Tic.initWork
+    let
+        topic_ =
+            Maybe.withDefault "elm" topic
+
+        ( timer, record ) =
+            Timer.initWork topic_
+    in
+    ( { record = record
       , trail = []
-      , timer = Timer.initWork
+      , timer = timer
       , notifications = Notification.denied
       , mode = Keyring.normal
       }
@@ -45,8 +53,9 @@ init { topic } =
 
 type Msg
     = Tick Time
-    | TicAddTopic String
-    | TicStamp Time
+    | RecordAddTopic String
+    | RecordStampStart Date
+    | RecordStampEnd Date
     | TimerReset
     | TimerStart
     | TimerStop
@@ -81,29 +90,44 @@ update msg model =
         Tick _ ->
             updateTimer model
 
-        TicAddTopic topic ->
-            ( { model | tic = Tic.withTopic topic model.tic }, storeTopic topic )
+        RecordAddTopic topic ->
+            ( updateTopic topic model, storeTopic topic )
 
-        TicStamp t ->
-            ( { model | tic = Tic.withTime t model.tic }
+        RecordStampStart date ->
+            ( { model | record = Record.startWith date model.record }
+            , Cmd.none
+            )
+
+        RecordStampEnd date ->
+            ( { model | record = Record.endWith date model.record }
             , Cmd.none
             )
 
         TimerStart ->
-            ( { model | timer = Timer.startOr model.timer model.tic.amount Timer.initWork }
-            , Task.perform TicStamp Time.now
+            ( startTimer model
+            , Task.perform RecordStampStart Date.now
             )
 
         TimerStop ->
             ( stopTimer model, Cmd.none )
 
         TimerReset ->
-            ( { model | timer = Timer.initWork }, Cmd.none )
+            ( updateDoneTimer model, Cmd.none )
+
+
+updateTopic : String -> Model -> Model
+updateTopic topic model =
+    { model | record = Record.withTopic topic model.record }
+
+
+startTimer : Model -> Model
+startTimer model =
+    { model | timer = Timer.startOr model.timer (Timer.init model.record.interval) }
 
 
 stopTimer : Model -> Model
 stopTimer model =
-    { model | timer = Timer.stopOr model.timer Timer.initWork }
+    { model | timer = Timer.stopOr model.timer (Timer.init model.record.interval) }
 
 
 updateTimer : Model -> ( Model, Cmd Msg )
@@ -123,18 +147,18 @@ updateTimer model =
 
 updateDoneTimer : Model -> Model
 updateDoneTimer model =
-    if Tic.isWork model.tic then
-        { model
-            | timer = Timer.initRest
-            , tic = Tic.initRest
-            , trail = model.tic :: model.trail
-        }
-    else
-        { model
-            | timer = Timer.initWork
-            , tic = Tic.next model.trail
-            , trail = model.tic :: model.trail
-        }
+    let
+        trail =
+            model.record :: model.trail
+
+        ( timer, record ) =
+            Timer.next trail
+    in
+    { model
+        | timer = timer
+        , record = record
+        , trail = trail
+    }
 
 
 updateModeFromCode : KeyCode -> Model -> Model
@@ -162,13 +186,13 @@ updateAction : Model -> Action -> Model
 updateAction model action =
     case action of
         Reset ->
-            { model | timer = Timer.initWork }
+            updateDoneTimer model
 
         Start ->
             if Timer.isRunning model.timer then
                 model
             else
-                { model | timer = Timer.startOr model.timer model.tic.amount Timer.initWork }
+                startTimer model
 
         Pause ->
             if Timer.isStopped model.timer then

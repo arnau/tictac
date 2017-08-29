@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html
 import Keyboard
 import Notification exposing (receivePermission)
-import Time exposing (Time, second)
+import Time exposing (second)
 import View.Main exposing (view)
 import World exposing (Flags, Model, Msg(AllowNotifications, KeyIn, Tick))
 

@@ -10,7 +10,7 @@ import View.ActivityIcon as Activity
 import View.Notification as Notification
 import View.Timer as Timer
 import View.Topic as Topic
-import World exposing (Model, Msg(TicAddTopic, Tick, TimerReset))
+import World exposing (Model, Msg(TimerReset))
 
 
 -- grid : Display {}
@@ -24,7 +24,7 @@ view : Model -> Html Msg
 view model =
     wrapper
         [ topBar model
-        , Timer.button model.timer model.tic
+        , Timer.button model.timer model.record
         ]
 
 
@@ -68,7 +68,7 @@ topBar model =
     header [ style headerStyle ]
         -- [ Activity.icon "#F26"
         [ Activity.icon "#FFF"
-        , Topic.view model.tic.topic
+        , Topic.view model.record.topic
         , div []
             [ button [ onClick TimerReset, style resetButton ] [ Html.text "Reset timer" ]
             , Notification.message model.notifications

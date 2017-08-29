@@ -1,6 +1,7 @@
 module Timer exposing (..)
 
 import Duration exposing (Duration, Interval(..))
+import Trail.Record as Record exposing (Record)
 
 
 type alias Error =
@@ -18,14 +19,23 @@ init interval =
     Stopped (Duration.init interval)
 
 
-initWork : Timer
-initWork =
-    init Work
+initWork : String -> ( Timer, Record )
+initWork topic =
+    ( init Work, Record.initWork topic )
 
 
-initRest : Timer
+initRest : ( Timer, Record )
 initRest =
-    init Rest
+    ( init Rest, Record.initRest )
+
+
+next : List Record -> ( Timer, Record )
+next trail =
+    let
+        record =
+            Record.next trail
+    in
+    ( init record.interval, record )
 
 
 tick : Timer -> Timer
@@ -114,8 +124,8 @@ stop timer =
             Err "You can't stop what's already done"
 
 
-startOr : Timer -> Duration -> Timer -> Timer
-startOr timer amount alt =
+startOr : Timer -> Timer -> Timer
+startOr timer alt =
     Result.withDefault alt (start timer)
 
 
