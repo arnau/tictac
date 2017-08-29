@@ -3,13 +3,6 @@
   "version": "0.1.0",
   "description": "A pomodoro app focused on simplicity",
   "main": "index.js",
-  "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "dev": "webpack-dev-server --port 3000",
-    "test": "elm-test",
-    "format": "elm-format --yes src"
-  },
   "author": "Arnau Siches",
   "private": true,
   "license": "BSD-3-Clause",
@@ -24,6 +17,5 @@
     "style-loader": "^0.18.2",
     "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1"
-  },
-  "dependencies": {}
+  }
 }

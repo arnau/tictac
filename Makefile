@@ -1,9 +1,15 @@
 NPM = $(shell which npm)
+NPM_PATH = node_modules/.bin/
+WEBPACK = $(join $(NPM_PATH), webpack)
+WEBPACK_SERVER = $(join $(NPM_PATH), webpack-dev-server)
+ELM_TEST = $(join $(NPM_PATH), elm-test)
+ELM_FORMAT = $(join $(NPM_PATH), elm-format)
+
 
 BUILD_DIR = dist
 
 build:
-	$(NPM) run build -- -p
+	$(WEBPACK) -p
 
 install:
 	$(NPM) install
@@ -16,7 +22,13 @@ clean-all: clean
 	rm -rf tests/elm-stuff
 
 test:
-	$(NPM) run test
+	$(ELM_TEST)
 
 server:
-	$(NPM) run dev
+	$(WEBPACK_SERVER) --port 3000
+
+watch:
+	$(WEBPACK) --watch
+
+format:
+	$(ELM-FORMAT) --yes src
