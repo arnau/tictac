@@ -1,20 +1,12 @@
 module Keyring exposing (..)
 
-import Char
 import Keyboard exposing (KeyCode)
+import Keyring.Action as Action exposing (Action(..))
 
 
 type Mode
     = Insert
     | Normal
-
-
-type Action
-    = Reset
-    | Start
-    | Pause
-    | SwitchToWork
-    | SwitchToBreak
 
 
 toMode : KeyCode -> Maybe Mode
@@ -54,26 +46,4 @@ toAction mode code =
             Nothing
 
         Normal ->
-            normalToAction code
-
-
-normalToAction : KeyCode -> Maybe Action
-normalToAction code =
-    case Char.fromCode code of
-        'X' ->
-            Just Reset
-
-        'S' ->
-            Just Start
-
-        'P' ->
-            Just Pause
-
-        'W' ->
-            Just SwitchToWork
-
-        'B' ->
-            Just SwitchToBreak
-
-        _ ->
-            Nothing
+            Action.fromCode code

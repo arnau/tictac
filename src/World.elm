@@ -1,7 +1,8 @@
 module World exposing (..)
 
 import Keyboard exposing (KeyCode)
-import Keyring exposing (Action(..), Mode)
+import Keyring exposing (Mode)
+import Keyring.Action exposing (Action(..))
 import LocalStorage exposing (storeTopic)
 import Notification exposing (Permission, notify, requestPermission)
 import Task
@@ -59,8 +60,8 @@ update msg model =
     case msg of
         KeyIn code ->
             ( model
-                |> updateMode code
-                |> updateAction code
+                |> updateModeFromCode code
+                |> updateActionFromCode code
             , Cmd.none
             )
 
@@ -136,55 +137,44 @@ updateDoneTimer model =
         }
 
 
-updateMode : KeyCode -> Model -> Model
-updateMode code model =
-    let
-        maybeMode =
-            Keyring.toMode code
+updateModeFromCode : KeyCode -> Model -> Model
+updateModeFromCode code model =
+    code
+        |> Keyring.toMode
+        |> Maybe.map (updateMode model)
+        |> Maybe.withDefault model
 
-        _ =
-            Debug.log "code" code
 
-        _ =
-            Debug.log "mode" maybeMode
-    in
-    case maybeMode of
-        Nothing ->
+updateMode : Model -> Mode -> Model
+updateMode model mode =
+    { model | mode = mode }
+
+
+updateActionFromCode : KeyCode -> Model -> Model
+updateActionFromCode code model =
+    code
+        |> Keyring.toAction model.mode
+        |> Maybe.map (updateAction model)
+        |> Maybe.withDefault model
+
+
+updateAction : Model -> Action -> Model
+updateAction model action =
+    case action of
+        Reset ->
+            { model | timer = Timer.initWork }
+
+        Start ->
+            if Timer.isRunning model.timer then
+                model
+            else
+                { model | timer = Timer.startOr model.timer model.tic.amount Timer.initWork }
+
+        Pause ->
+            if Timer.isStopped model.timer then
+                model
+            else
+                stopTimer model
+
+        _ ->
             model
-
-        Just mode ->
-            { model | mode = mode }
-
-
-updateAction : KeyCode -> Model -> Model
-updateAction code model =
-    let
-        maybeAction =
-            Keyring.toAction model.mode code
-
-        _ =
-            Debug.log "action" maybeAction
-    in
-    case maybeAction of
-        Nothing ->
-            model
-
-        Just action ->
-            case action of
-                Reset ->
-                    { model | timer = Timer.initWork }
-
-                Start ->
-                    if Timer.isRunning model.timer then
-                        model
-                    else
-                        { model | timer = Timer.startOr model.timer model.tic.amount Timer.initWork }
-
-                Pause ->
-                    if Timer.isStopped model.timer then
-                        model
-                    else
-                        stopTimer model
-
-                _ ->
-                    model
