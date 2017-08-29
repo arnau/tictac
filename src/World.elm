@@ -68,11 +68,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         KeyIn code ->
-            ( model
+            model
                 |> updateModeFromCode code
                 |> updateActionFromCode code
-            , Cmd.none
-            )
 
         RequestPermission ->
             ( model, requestPermission "" )
@@ -99,7 +97,7 @@ update msg model =
             )
 
         RecordStampEnd date ->
-            ( { model | record = Record.endWith date model.record }
+            ( updateTrail date model
             , Cmd.none
             )
 
@@ -112,7 +110,7 @@ update msg model =
             ( stopTimer model, Cmd.none )
 
         TimerReset ->
-            ( updateDoneTimer model, Cmd.none )
+            ( model, Task.perform RecordStampEnd Date.now )
 
 
 updateTopic : String -> Model -> Model
@@ -138,7 +136,12 @@ updateTimer model =
                 Timer.tick model.timer
         in
         if Timer.isDone timer then
-            ( updateDoneTimer model, notify "Time is up" )
+            ( model
+            , Cmd.batch
+                [ Task.perform RecordStampEnd Date.now
+                , notify "Time is up"
+                ]
+            )
         else
             ( { model | timer = timer }, Cmd.none )
     else
@@ -150,6 +153,22 @@ updateDoneTimer model =
     let
         trail =
             model.record :: model.trail
+
+        ( timer, record ) =
+            Timer.next trail
+    in
+    { model
+        | timer = timer
+        , record = record
+        , trail = trail
+    }
+
+
+updateTrail : Date -> Model -> Model
+updateTrail date model =
+    let
+        trail =
+            Record.endWith date model.record :: model.trail
 
         ( timer, record ) =
             Timer.next trail
@@ -174,31 +193,37 @@ updateMode model mode =
     { model | mode = mode }
 
 
-updateActionFromCode : KeyCode -> Model -> Model
+updateActionFromCode : KeyCode -> Model -> ( Model, Cmd Msg )
 updateActionFromCode code model =
     code
         |> Keyring.toAction model.mode
         |> Maybe.map (updateAction model)
-        |> Maybe.withDefault model
+        |> Maybe.withDefault ( model, Cmd.none )
 
 
-updateAction : Model -> Action -> Model
+updateAction : Model -> Action -> ( Model, Cmd Msg )
 updateAction model action =
     case action of
         Reset ->
-            updateDoneTimer model
+            ( model, Task.perform RecordStampEnd Date.now )
 
         Start ->
             if Timer.isRunning model.timer then
-                model
+                ( model, Cmd.none )
             else
-                startTimer model
+                case Timer.start model.timer of
+                    Ok timer ->
+                        ( { model | timer = timer }, Task.perform RecordStampStart Date.now )
+
+                    Err _ ->
+                        -- TODO: Review this path
+                        ( model, Cmd.none )
 
         Pause ->
             if Timer.isStopped model.timer then
-                model
+                ( model, Cmd.none )
             else
-                stopTimer model
+                ( stopTimer model, Cmd.none )
 
         _ ->
-            model
+            ( model, Cmd.none )
