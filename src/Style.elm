@@ -9,6 +9,7 @@ import View.Legend as Legend
 import View.Mode as Mode
 import View.Topic as Topic
 import View.TopicInput as TopicInput
+import View.Wrapper as Wrapper
 
 
 init : Css.Stylesheet
@@ -21,6 +22,7 @@ init =
             , margin zero
             , padding zero
             ]
+        , Wrapper.rule
         , Legend.rule
         , Help.rule
         , Mode.rule
