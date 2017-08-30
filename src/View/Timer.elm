@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Timer exposing (Timer)
 import Trail.Record exposing (Record)
 import View.Helpers exposing (style)
+import View.Topic as Topic
 import World exposing (Msg(..))
 
 
@@ -34,5 +35,6 @@ button state { topic } =
             ]
     in
     Html.button [ onClick clickAction, style buttonStyle ]
-        [ Html.text (Timer.formatWithDefault 0 state)
+        [ Topic.node topic
+        , Html.text (Timer.formatWithDefault 0 state)
         ]

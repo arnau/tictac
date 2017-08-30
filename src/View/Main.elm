@@ -12,7 +12,7 @@ import View.Legend as Legend
 import View.Mode as Mode
 import View.Notification as Notification
 import View.Timer as Timer
-import View.Topic as Topic
+import View.TopicInput as TopicInput
 import World exposing (Model, Msg(TimerReset))
 
 
@@ -30,6 +30,8 @@ view model =
         [ topBar model
         , if Keyring.isHelp model.mode then
             Legend.node model
+          else if Keyring.isInsert model.mode then
+            TopicInput.node model
           else
             Timer.button model.timer model.record
         ]
@@ -67,7 +69,6 @@ topBar model =
             [ Activity.icon "#FFF"
             , Notification.message model.notifications
             ]
-        , Topic.view model.record.topic
         , Help.button
         , Mode.node model.mode
         ]
