@@ -27,6 +27,9 @@ type alias Model =
     , notifications : Permission
     , mode : Mode
     , help : Help
+
+    -- TODO: Auxiliary cache to simplify keeping track of the last work topic
+    , topic : String
     }
 
 
@@ -41,6 +44,7 @@ init { topic } =
     in
     ( { record = record
       , trail = []
+      , topic = topic_
       , timer = timer
       , notifications = Notification.denied
       , mode = Keyring.normal
@@ -129,7 +133,10 @@ update msg model =
 
 updateTopic : String -> Model -> Model
 updateTopic topic model =
-    { model | record = Record.withTopic topic model.record }
+    { model
+        | record = Record.withTopic topic model.record
+        , topic = topic
+    }
 
 
 startTimer : Model -> Model
@@ -162,22 +169,6 @@ updateTimer model =
         ( model, Cmd.none )
 
 
-updateDoneTimer : Model -> Model
-updateDoneTimer model =
-    let
-        trail =
-            model.record :: model.trail
-
-        ( timer, record ) =
-            Timer.next trail
-    in
-    { model
-        | timer = timer
-        , record = record
-        , trail = trail
-    }
-
-
 updateTrail : Date -> Model -> Model
 updateTrail date model =
     let
@@ -185,7 +176,7 @@ updateTrail date model =
             Record.endWith date model.record :: model.trail
 
         ( timer, record ) =
-            Timer.next trail
+            Timer.next model.topic trail
     in
     { model
         | timer = timer
