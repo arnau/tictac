@@ -4,9 +4,8 @@ module Style exposing (..)
 
 import Css exposing (..)
 import Css.Elements exposing (body)
-import View.Help as Help
+import View.Header as Header
 import View.Legend as Legend
-import View.Mode as Mode
 import View.Topic as Topic
 import View.TopicInput as TopicInput
 import View.Wrapper as Wrapper
@@ -23,9 +22,8 @@ init =
             , padding zero
             ]
         , Wrapper.rule
+        , Header.rule
         , Legend.rule
-        , Help.rule
-        , Mode.rule
         , Topic.rule
         , TopicInput.rule
         ]

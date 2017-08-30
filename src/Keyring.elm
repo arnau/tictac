@@ -22,7 +22,10 @@ toMode mode code =
 
         73 ->
             -- I
-            Just Insert
+            if isHelp mode then
+                Nothing
+            else
+                Just Insert
 
         27 ->
             -- Esc
