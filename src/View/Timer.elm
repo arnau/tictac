@@ -2,7 +2,7 @@ module View.Timer exposing (..)
 
 import Css exposing (..)
 import Html exposing (Attribute, Html)
-import Html.Events exposing (onClick)
+import Html.Attributes as At
 import Timer exposing (Timer)
 import Trail.Record exposing (Record)
 import View.Helpers exposing (style)
@@ -10,31 +10,35 @@ import View.Topic as Topic
 import World exposing (Msg(..))
 
 
-button : Timer -> Record -> Html Msg
-button state { topic } =
-    let
-        clickAction =
-            if Timer.isRunning state then
-                TimerStop
-            else
-                TimerStart
+type Name
+    = Timer
 
-        buttonStyle =
-            [ backgroundColor (hex "000")
-            , border zero
-            , color
+
+rule : Snippet
+rule =
+    class Timer
+        [ backgroundColor (hex "000")
+        , border zero
+        , display block
+        , fontFamilies [ "Roboto Condensed", "sans-serif" ]
+        , fontSize (Css.rem 10)
+        , outline none
+        ]
+
+
+node : Timer -> Record -> Html Msg
+node state { topic } =
+    let
+        color_ =
+            [ color
                 (if Timer.isRunning state then
                     hex "CCC"
                  else
                     hex "FFF"
                 )
-            , display block
-            , fontFamilies [ "Roboto Condensed", "sans-serif" ]
-            , fontSize (Css.rem 10)
-            , outline none
             ]
     in
-    Html.button [ onClick clickAction, style buttonStyle ]
+    Html.button [ At.class (toString Timer), style color_ ]
         [ Topic.node topic
         , Html.text (Timer.formatWithDefault 0 state)
         ]

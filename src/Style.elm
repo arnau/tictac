@@ -6,6 +6,7 @@ import Css exposing (..)
 import Css.Elements exposing (body)
 import View.Header as Header
 import View.Legend as Legend
+import View.Timer as Timer
 import View.Topic as Topic
 import View.TopicInput as TopicInput
 import View.Wrapper as Wrapper
@@ -26,4 +27,5 @@ init =
         , Legend.rule
         , Topic.rule
         , TopicInput.rule
+        , Timer.rule
         ]

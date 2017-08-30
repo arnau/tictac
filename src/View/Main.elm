@@ -22,5 +22,5 @@ view model =
                 TopicInput.node model
 
             Normal ->
-                Timer.button model.timer model.record
+                Timer.node model.timer model.record
         ]
