@@ -1,6 +1,7 @@
 module World exposing (..)
 
 import Date exposing (Date, second)
+import Help exposing (Help)
 import Keyboard exposing (KeyCode)
 import Keyring exposing (Mode)
 import Keyring.Action exposing (Action(..))
@@ -25,6 +26,7 @@ type alias Model =
     , timer : Timer
     , notifications : Permission
     , mode : Mode
+    , help : Help
     }
 
 
@@ -42,6 +44,7 @@ init { topic } =
       , timer = timer
       , notifications = Notification.denied
       , mode = Keyring.normal
+      , help = Help.init
       }
     , requestPermission ""
     )
@@ -62,11 +65,22 @@ type Msg
     | AllowNotifications String
     | RequestPermission
     | KeyIn KeyCode
+    | LegendToggle
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LegendToggle ->
+            let
+                mode =
+                    if Keyring.isHelp model.mode then
+                        Keyring.normal
+                    else
+                        Keyring.help
+            in
+            ( { model | mode = mode }, Cmd.none )
+
         KeyIn code ->
             model
                 |> updateModeFromCode code
@@ -183,7 +197,7 @@ updateTrail date model =
 updateModeFromCode : KeyCode -> Model -> Model
 updateModeFromCode code model =
     code
-        |> Keyring.toMode
+        |> Keyring.toMode model.mode
         |> Maybe.map (updateMode model)
         |> Maybe.withDefault model
 

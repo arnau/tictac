@@ -7,11 +7,19 @@ import Keyring.Action as Action exposing (Action(..))
 type Mode
     = Insert
     | Normal
+    | Help
 
 
-toMode : KeyCode -> Maybe Mode
-toMode code =
+toMode : Mode -> KeyCode -> Maybe Mode
+toMode mode code =
     case code of
+        72 ->
+            -- H
+            if isInsert mode then
+                Nothing
+            else
+                Just Help
+
         73 ->
             -- I
             Just Insert
@@ -29,6 +37,11 @@ normal =
     Normal
 
 
+help : Mode
+help =
+    Help
+
+
 isNormal : Mode -> Bool
 isNormal mode =
     mode == Normal
@@ -39,10 +52,18 @@ isInsert mode =
     mode == Insert
 
 
+isHelp : Mode -> Bool
+isHelp mode =
+    mode == Help
+
+
 toAction : Mode -> KeyCode -> Maybe Action
 toAction mode code =
     case mode of
         Insert ->
+            Nothing
+
+        Help ->
             Nothing
 
         Normal ->

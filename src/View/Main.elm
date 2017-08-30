@@ -1,30 +1,37 @@
 module View.Main exposing (..)
 
--- import Css exposing (..)
 -- import View.Helpers
 
+import Css exposing (..)
 import Html exposing (Html, button, div, header, input)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
+import Keyring
 import View.ActivityIcon as Activity
+import View.Help as Help
+import View.Legend as Legend
+import View.Mode as Mode
 import View.Notification as Notification
 import View.Timer as Timer
 import View.Topic as Topic
 import World exposing (Model, Msg(TimerReset))
 
 
--- grid : Display {}
--- grid =
---     { value = "grid"
---     , display = Compatible
---     }
+{-| Hack to define `display: grid`. elm-css doesn't seem to offer a better
+way to do it
+-}
+grid : Display {}
+grid =
+    { block | value = "grid" }
 
 
 view : Model -> Html Msg
 view model =
     wrapper
         [ topBar model
-        , Timer.button model.timer model.record
+        , if Keyring.isHelp model.mode then
+            Legend.node model
+          else
+            Timer.button model.timer model.record
         ]
 
 
@@ -33,7 +40,7 @@ wrapper children =
     let
         styleList =
             [ ( "display", "grid" )
-            , ( "grid-template-rows", "40px 1fr" )
+            , ( "grid-template-rows", "50px 1fr" )
             , ( "height", "100vh" )
             ]
     in
@@ -53,24 +60,14 @@ topBar model =
             , ( "justify-content", "space-between" )
             , ( "align-items", "stretch" )
             ]
-
-        resetButton =
-            [ ( "font-size", "1rem" )
-            , ( "font-family", "'Roboto Condensed', sans-serif" )
-            , ( "background-color", "black" )
-            , ( "border", "1px solid #555" )
-            , ( "border-radius", "3px" )
-            , ( "color", "#999" )
-            , ( "min-height", "3vh" )
-            , ( "padding", "0 1rem" )
-            ]
     in
     header [ style headerStyle ]
         -- [ Activity.icon "#F26"
-        [ Activity.icon "#FFF"
-        , Topic.view model.record.topic
-        , div []
-            [ button [ onClick TimerReset, style resetButton ] [ Html.text "Reset timer" ]
+        [ div []
+            [ Activity.icon "#FFF"
             , Notification.message model.notifications
             ]
+        , Topic.view model.record.topic
+        , Help.button
+        , Mode.node model.mode
         ]
