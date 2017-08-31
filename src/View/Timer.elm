@@ -1,6 +1,7 @@
 module View.Timer exposing (..)
 
 import Css exposing (..)
+import Css.Extra exposing (..)
 import Html exposing (Attribute, Html)
 import Html.Attributes as At
 import Timer exposing (Timer)
@@ -23,6 +24,8 @@ rule =
         , fontFamilies [ "Roboto Condensed", "sans-serif" ]
         , fontSize (Css.rem 10)
         , outline none
+        , justifySelf Center
+        , alignSelf center
         ]
 
 
@@ -38,7 +41,7 @@ node state { topic } =
                 )
             ]
     in
-    Html.button [ At.class (toString Timer), style color_ ]
+    Html.div [ At.class (toString Timer), style color_ ]
         [ Topic.node topic
         , Html.text (Timer.formatWithDefault 0 state)
         ]

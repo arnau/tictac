@@ -42,6 +42,22 @@ gridTemplateRows2 =
     prop2 "grid-template-rows"
 
 
+justifySelf : JustifySelf -> Style
+justifySelf value =
+    let
+        normalisedValue =
+            String.toLower (toString value)
+    in
+    property "justify-self" normalisedValue
+
+
+type JustifySelf
+    = Start
+    | End
+    | Center
+    | Stretch
+
+
 prop2 : String -> Value a -> Value b -> Style
 prop2 key argA argB =
     property key (String.join " " [ argA.value, argB.value ])
