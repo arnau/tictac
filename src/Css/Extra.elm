@@ -37,7 +37,7 @@ type FrUnits
     = FrUnits
 
 
-gridTemplateRows2 : Length compatibleA unitsA -> Length compatibleB unitsB -> Style
+gridTemplateRows2 : LengthOrAuto compatibleA -> LengthOrAuto compatibleB -> Style
 gridTemplateRows2 =
     prop2 "grid-template-rows"
 

@@ -15,7 +15,7 @@ rule : Snippet
 rule =
     class Wrapper
         [ display grid
-        , gridTemplateRows2 (px 50) (fr 1)
+        , gridTemplateRows2 (px 50) auto
         , height (vh 100)
         ]
 
