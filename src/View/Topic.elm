@@ -15,6 +15,7 @@ rule =
     class Topic
         [ color (hex "999")
         , fontSize (Css.rem 1.8)
+        , textAlign center
         ]
 
 
