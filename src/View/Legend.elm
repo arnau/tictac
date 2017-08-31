@@ -21,8 +21,9 @@ rule =
         , fontFamilies [ "Roboto Condensed", "sans-serif" ]
         , fontSize (Css.rem 1.2)
         , minHeight (vh 3)
-        , padding2 zero (vh 4)
-        , margin2 (vh 10) auto
+        , padding (px 40)
+        , margin2 (px 60) auto
+        , overflow auto
         , width (pct 50)
         , children
             [ ul
