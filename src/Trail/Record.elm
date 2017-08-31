@@ -66,8 +66,8 @@ opposite topic record =
 
 {-| Returns the next record according to the given trail of records
 -}
-next : String -> List Record -> Record
-next topic trail =
+next : List Record -> Record
+next trail =
     case trail of
         [] ->
             -- This should be unreachable. Consider using a Result
@@ -77,7 +77,7 @@ next topic trail =
             if isWork record then
                 initRest
             else
-                initWork topic
+                initWork record.topic
 
 
 startWith : Date -> Record -> Record

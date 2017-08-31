@@ -29,11 +29,11 @@ initRest =
     ( init Rest, Record.initRest )
 
 
-next : String -> List Record -> ( Timer, Record )
-next topic trail =
+next : List Record -> ( Timer, Record )
+next trail =
     let
         record =
-            Record.next topic trail
+            Record.next trail
     in
     ( init record.interval, record )
 
