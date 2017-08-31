@@ -71,13 +71,16 @@ next trail =
     case trail of
         [] ->
             -- This should be unreachable. Consider using a Result
-            initWork ""
+            initRest
 
-        record :: _ ->
-            if isWork record then
+        _ :: [] ->
+            initRest
+
+        first :: second :: _ ->
+            if isWork first then
                 initRest
             else
-                initWork record.topic
+                initWork second.topic
 
 
 startWith : Date -> Record -> Record

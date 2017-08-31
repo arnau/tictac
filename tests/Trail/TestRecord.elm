@@ -44,7 +44,7 @@ suite =
                 expectRest <| next [ initWork "foo" ]
         , test "Next from [Rest] is Work" <|
             \_ ->
-                expectWork <| next [ initRest ]
+                expectWork <| next [ initRest, initWork "foo" ]
         , test "Stamp record with start date" <|
             \_ ->
                 let
