@@ -6,13 +6,13 @@ import Html exposing (Attribute, Html)
 import Html.Attributes as At
 import Timer exposing (Timer)
 import Trail.Record exposing (Record)
-import View.Helpers exposing (style)
 import View.Topic as Topic
 import World exposing (Msg(..))
 
 
 type Name
     = Timer
+    | TimerStarted
 
 
 rule : Snippet
@@ -26,22 +26,21 @@ rule =
         , outline none
         , justifySelf Center
         , alignSelf center
+        , color (hex "FFF")
+        , withClass TimerStarted
+            [ color (hex "888")
+            ]
         ]
 
 
 node : Timer -> Record -> Html Msg
 node state { topic } =
-    let
-        color_ =
-            [ color
-                (if Timer.isRunning state then
-                    hex "CCC"
-                 else
-                    hex "FFF"
-                )
+    Html.div
+        [ At.classList
+            [ ( toString Timer, True )
+            , ( toString TimerStarted, Timer.isRunning state )
             ]
-    in
-    Html.div [ At.class (toString Timer), style color_ ]
+        ]
         [ Topic.node topic
         , Html.text (Timer.formatWithDefault 0 state)
         ]
