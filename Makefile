@@ -7,6 +7,7 @@ ELM_TEST = $(join $(NPM_PATH), elm-test)
 ELM_FORMAT = $(join $(NPM_PATH), elm-format)
 
 BUILD_DIR = dist
+EXAMPLE_DIR = docs
 
 build:
 	$(WEBPACK) -p
@@ -38,3 +39,8 @@ watch:
 
 format:
 	$(ELM-FORMAT) --yes src
+
+# Compiles and sets a new version of the example for github pages.
+example: build
+	rm -rf $(EXAMPLE_DIR)
+	cp -R $(BUILD_DIR) $(EXAMPLE_DIR)
